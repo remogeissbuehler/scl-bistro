@@ -3,5 +3,5 @@ server/node_modules
 client/node_modules
 _config.json
 .DS_Store
-build
+/build
 *.backup
