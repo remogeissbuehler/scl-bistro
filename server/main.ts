@@ -65,7 +65,14 @@ if (config.isProduction) {
     // redirect to https
     let redirect = express();
     redirect.use((req, res, next) => {
-        res.redirect('https://' + req.headers.host + req.url);
+        let splitHost = req.headers.host?.split(':');
+        let host: string | undefined = undefined;
+        if (splitHost && splitHost.length > 1) {
+            host = splitHost.slice(0, splitHost.length-1).join("");
+        } else if (splitHost) {
+            host = splitHost?.join("");
+        }
+        res.redirect('https://' + host + req.url);
     });
     redirect.listen(config.server.httpPort, () => {
         console.log(`App also listening on port ${config.server.httpPort} for redirection`);
