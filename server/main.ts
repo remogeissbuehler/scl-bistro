@@ -23,8 +23,14 @@ const db = new Database();
 
 const httpsServer = createServer({
     key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
-    cert: fs.readFileSync(path.join(__dirname, config.crypto.cert))
+    cert: fs.readFileSync(path.join(__dirname, config.crypto.cert)),
+    ca: config.crypto.ca == null ? undefined : fs.readFileSync(path.join(__dirname, config.crypto.ca))
 }, app);
+
+app.use((req, res, next) => {
+    console.log(`${req.method}: ${req.url} from ${req.socket.remoteAddress}`);
+    next();
+});
 
 
 app.use(bodyParser.json());
@@ -61,20 +67,21 @@ httpsServer.listen(config.server.port, () => {
     console.log(`https listening on port ${config.server.port}`);
 });
 
-if (config.isProduction) {
-    // redirect to https
-    let redirect = express();
-    redirect.use((req, res, next) => {
-        let splitHost = req.headers.host?.split(':');
-        let host: string | undefined = undefined;
-        if (splitHost && splitHost.length > 1) {
-            host = splitHost.slice(0, splitHost.length-1).join("");
-        } else if (splitHost) {
-            host = splitHost?.join("");
-        }
-        res.redirect('https://' + host + req.url);
-    });
-    redirect.listen(config.server.httpPort, () => {
-        console.log(`App also listening on port ${config.server.httpPort} for redirection`);
-    });
-}
+// if (config.isProduction) {
+//     // redirect to https
+//     let redirect = express();
+//     redirect.use((req, res, next) => {
+//     	console.log("Got request to redirect");
+//         let splitHost = req.headers.host?.split(':');
+//         let host: string | undefined = undefined;
+//         if (splitHost && splitHost.length > 1) {
+//             host = splitHost.slice(0, splitHost.length-1).join("");
+//         } else if (splitHost) {
+//             host = splitHost?.join("");
+//         }
+//         res.redirect('https://' + host + req.url);
+//     });
+//     redirect.listen(config.server.httpPort, () => {
+//         console.log(`App also listening on port ${config.server.httpPort} for redirection`);
+//     });
+// }
