@@ -6,10 +6,13 @@ import { User, IUser } from '../models/User';
 import { getUsers } from '../db/UserManagement';
 import { Inscription } from '../models/Inscription';
 import mongoose from 'mongoose';
+import { assertAuthenticationMiddleware } from './auth';
 // import bcrypt from 'bcrypt';
 
-let router = Router()
+let router = Router();
 
+// make sure all api calls here are authenticated
+router.use(assertAuthenticationMiddleware);
 
 router.get("/:from/:to", async (req, res) => {
     // console.log(req.params.from, req.params.to);

@@ -1,4 +1,4 @@
-import { Handler, Request, Router } from 'express';
+import { Handler, NextFunction, Request, Response, Router } from 'express';
 import { CallbackError, HydratedDocument } from 'mongoose';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -95,5 +95,13 @@ router.post("/signup", async (req: any, res) => {
     
     res.send("ok");
 });
+
+export function assertAuthenticationMiddleware(req: Request, res: Response, next: NextFunction) {
+    if (!req.isAuthenticated()) {
+        res.status(403).send("you must be logged in;")
+        return;
+    }
+    next();
+}
 
 export default router;

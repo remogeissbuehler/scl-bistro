@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import { createServer } from 'https';
 import http from 'http';
@@ -63,21 +63,12 @@ app.get('/', (req, res) => {
 
 app.use('/auth', auth);
 
+
 /* assert authentication from here on */
 // app.use(passport.authenticate());
 app.use((req, res, next) => {
     console.log(req.isAuthenticated());
-    if (!req.isAuthenticated()) {
-        res.status(403).send("you must be logged in;")
-        return;
-        // console.log(res);
-        // res.send("j'pense pas");
-        // res.setHeader()
-        // res.statusCode = 403;
-        // res.send("Must authenticate first");
-        // res.end();
-    }
-    next();
+    
 });
 
 app.use('/users', users);
@@ -85,4 +76,6 @@ app.use('/inscriptions', inscriptions)
 
 
 
-httpsServer.listen(config.server.port);
+httpsServer.listen(config.server.port, () => {
+    console.log(`https listening on port ${config.server.port}`);
+});

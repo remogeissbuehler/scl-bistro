@@ -4,9 +4,11 @@ import passport from 'passport';
 // import { Strategy as LocalStrategy } from 'passport-local';
 import { User, IUser } from '../models/User';
 import { getUsers }from '../db/UserManagement';
+import { assertAuthenticationMiddleware } from './auth';
 // import bcrypt from 'bcrypt';
 
-let router = Router()
+let router = Router();
+router.use(assertAuthenticationMiddleware);
 
 
 router.get("/all", async (req, res) => {
