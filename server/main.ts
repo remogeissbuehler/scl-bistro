@@ -21,27 +21,19 @@ import MongoStore from 'connect-mongo';
 const app = express();
 const db = new Database();
 
-// async function run() {
-    
-//     let client = (await db.connect()).getClient();
-//     try {
-//       const database = client.db("bistro");
-//       const collection = database.collection("users");
-//       const docCount = await collection.countDocuments({});
-//       console.log(docCount);
-//       // perform actions using client
-//     } finally {
-//       // Ensures that the client will close when you finish/error
-//       await client.close();
-//     }
-//   }
-
-//   run();
-
 const httpsServer = createServer({
     key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
     cert: fs.readFileSync(path.join(__dirname, config.crypto.cert))
 }, app);
+
+if (config.isProduction) {
+    // redirect to https
+    app.enable('trust proxy')
+    app.use((req, res, next) => {
+        req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+    });
+}
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -55,7 +47,8 @@ app.use(session({
     store: cookieStore,
     secret: config.misc.cookieSecret,
     resave: true,
-  saveUninitialized: true
+    saveUninitialized: true,
+    
 }))
 
 app.use(passport.initialize());
