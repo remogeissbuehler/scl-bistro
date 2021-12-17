@@ -19,7 +19,7 @@ router.get("/:from/:to", async (req, res) => {
     let from = new Date(req.params.from);
     let to = new Date(req.params.to);
 
-    console.log([from, to]);
+    // console.log([from, to]);
 
     try {
         let query = Inscription.find({ date: { $gte: from, $lte: to } })
@@ -46,7 +46,7 @@ interface AddObj {
 
 router.post("/add", async (req: any, res) => {
     let body = req.body;
-    console.log(req);
+    // console.log(req);
 
     let user_id = req.user._id;
 
