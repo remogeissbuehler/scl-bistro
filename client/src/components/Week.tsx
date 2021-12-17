@@ -141,7 +141,7 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
 
         // let monday = today.getDate() - today.getDay();
         let endDay = startDate.getDate() + 6;
-        let endDate = new Date((new Date).setDate(endDay));
+        let endDate = new Date((new Date(startDate)).setDate(endDay));
 
         let short = (date: Date) => date.toLocaleDateString('en-GB').split("/").reverse().join("-");
 
