@@ -62,15 +62,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', auth);
-
-
-/* assert authentication from here on */
-// app.use(passport.authenticate());
-app.use((req, res, next) => {
-    console.log(req.isAuthenticated());
-    
-});
-
 app.use('/users', users);
 app.use('/inscriptions', inscriptions)
 
