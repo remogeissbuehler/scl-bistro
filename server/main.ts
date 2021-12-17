@@ -32,6 +32,9 @@ if (config.isProduction) {
     app.use((req, res, next) => {
         req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
     });
+    app.listen(80, () => {
+        console.log(`App also listening on port 80 for redirection`);
+    })
 }
 
 
