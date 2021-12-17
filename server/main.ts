@@ -26,17 +26,6 @@ const httpsServer = createServer({
     cert: fs.readFileSync(path.join(__dirname, config.crypto.cert))
 }, app);
 
-if (config.isProduction) {
-    // redirect to https
-    app.enable('trust proxy')
-    app.use((req, res, next) => {
-        req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
-    });
-    app.listen(config.server.httpPort, () => {
-        console.log(`App also listening on port 80 for redirection`);
-    })
-}
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -68,8 +57,17 @@ app.use('/auth', auth);
 app.use('/users', users);
 app.use('/inscriptions', inscriptions)
 
-
-
 httpsServer.listen(config.server.port, () => {
     console.log(`https listening on port ${config.server.port}`);
 });
+
+if (config.isProduction) {
+    // redirect to https
+    let redirect = express();
+    redirect.use((req, res, next) => {
+        res.redirect('https://' + req.headers.host + req.url);
+    });
+    redirect.listen(config.server.httpPort, () => {
+        console.log(`App also listening on port ${config.server.httpPort} for redirection`);
+    });
+}
