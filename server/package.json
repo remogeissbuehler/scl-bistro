@@ -27,7 +27,7 @@
   "main": "main.ts",
   "scripts": {
     "dev": "nodemon",
-    "start": "node-ts index.ts"
+    "start": "ts-node main.ts"
   },
   "author": "RGe",
   "license": "ISC",
