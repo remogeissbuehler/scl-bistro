@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+
+    <style>
+        label {
+            display: inline-block;
+            width: 140px;
+            text-align: right;
+        }
+    </style>
+    <title>Neue Nutzer erfassen</title>
+</head>
+
+<body>
+
+    <div id="root">
+        <form action="/auth/signup" method="post" class="settings">
+            <label for="username">Benutzername</label>
+            <input name="username" type="text" />
+            <br><br>
+            <label for="name">Vorname und Name</label>
+            <input name="name" type="text" />
+            <br><br>
+            <label for="password">Passwort</label>
+            <input name="password" type="password" autocomplete="new-password" />
+            <br><br>
+            <input type="submit" value="Nutzer erfassen">
+        </form>
+    </div>
+
+</body>
+
+</html>

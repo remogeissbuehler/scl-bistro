@@ -13,11 +13,11 @@ async function hashPw(username: string, password: string) {
 }
 
 
-export async function addUser(username: string, password: string, number?: number) {
+export async function addUser(username: string, password: string, fullname?: string) {
     const hash = await hashPw(username, password);
     const newUser = new User({
         username: username,
-        number: number,
+        fullname: fullname,
         hash: hash
     });
     

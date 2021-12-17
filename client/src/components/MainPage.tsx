@@ -24,6 +24,8 @@ export class MainPage extends Component<any, { loggedIn: boolean }> {
     onUnauthorized() {
         this.setState({ loggedIn: false });
         localStorage.setItem("loggedIn", "false");
+        for (let key of ["username", "fullname", "user_id"])
+            localStorage.removeItem(key)
     }
 
     async checkLogin() {

@@ -4,6 +4,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User, IUser } from '../models/User';
 import bcrypt from 'bcrypt';
+import path from 'path';
+import { addUser } from '../db/UserManagement';
 // import cors from '/';
 
 let router = Router();
@@ -20,6 +22,7 @@ passport.deserializeUser((id, done) => {
 
 passport.use(new LocalStrategy((username, password, done) => {
     User.findOne({ username: username }, async (err: CallbackError, user: HydratedDocument<IUser>) => {
+        console.log(err, user);
         if (err) { return done(err); }
         if (!user) return done(null, false, { message: "Incorrect Username" });
 
@@ -56,6 +59,41 @@ router.get("/login", (req, res) => {
 router.get("/logout", (req, res) => {
     req.logOut();
     res.send("logged out");
-})
+});
+
+router.get("/signup", (req, res) => {
+    res.sendFile(path.join(__dirname, "signup.html"));
+});
+
+function notAuthorized(req: any, res: any) {
+    res.status(403);
+    res.send("not allowed");
+    return;
+}
+
+router.post("/signup", async (req: any, res) => {
+    // console.log(req.body);
+
+    if (!req.user) {
+        notAuthorized(req, res);
+        return;
+    }
+    if (!req.user.rights){
+        notAuthorized(req, res);
+        return;
+    }
+    if (!req.user.rights.includes("admin")) {
+        notAuthorized(req, res);
+        return;
+    }
+
+    try {
+        await addUser(req.body.username, req.body.password, req.body.name);
+    } catch (e) {
+        res.status(400).end();
+    }
+    
+    res.send("ok");
+});
 
 export default router;

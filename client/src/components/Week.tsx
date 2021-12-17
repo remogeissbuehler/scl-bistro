@@ -180,7 +180,7 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                         <Button variant="contained"
                                 color="inherit"
                                 onClick={() => {
-                            axios.get("/logout");
+                            axios.get("/auth/logout");
                             this.onUnauthorized();
                         }}>
                             <LogoutIcon color="primary"/>

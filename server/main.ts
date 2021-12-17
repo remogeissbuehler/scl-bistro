@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import { createServer } from 'https';
+import http from 'http';
 import { config } from '../config';
 import { Database } from './db/Database'
 import { User } from './models/User'
@@ -18,14 +19,32 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 
 const app = express();
-
 const db = new Database();
+
+// async function run() {
+    
+//     let client = (await db.connect()).getClient();
+//     try {
+//       const database = client.db("bistro");
+//       const collection = database.collection("users");
+//       const docCount = await collection.countDocuments({});
+//       console.log(docCount);
+//       // perform actions using client
+//     } finally {
+//       // Ensures that the client will close when you finish/error
+//       await client.close();
+//     }
+//   }
+
+//   run();
+
 const httpsServer = createServer({
     key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
     cert: fs.readFileSync(path.join(__dirname, config.crypto.cert))
 }, app);
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 // app.use(cookieParser(config.misc.cookieSecret));
 let cookieStore = MongoStore.create({
     clientPromise: db.clientPromise(),
@@ -41,6 +60,13 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/app", express.static("../client/build"));
+// app.use("/static", express.static("../client/build/static"));
+
+app.get('/', (req, res) => {
+    res.redirect("/app");
+});
 
 app.use('/auth', auth);
 
@@ -64,8 +90,6 @@ app.use((req, res, next) => {
 app.use('/users', users);
 app.use('/inscriptions', inscriptions)
 
-app.get('/', (req, res) => {
-    res.send("hello world")
-})
+
 
 httpsServer.listen(config.server.port);

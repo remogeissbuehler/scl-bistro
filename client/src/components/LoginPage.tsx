@@ -13,7 +13,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios, { Axios } from 'axios';
-import { config } from 'scl-bistro/config';
+// import { config } from 'scl-bistro/config';
+import { config } from '../../../config';
 import { isAsyncFunction } from 'util/types';
 import { OutlinedFlagOutlined } from '@mui/icons-material';
 import { Alert } from '@mui/material';
@@ -88,7 +89,8 @@ export default function LoginPage({ onLogin }: { onLogin: Function }) {
           md={7}
           sx={{
             // backgroundImage: 'url(https://source.unsplash.com/random)',
-            backgroundImage: 'url(https://www.ilfishalle.ch/wp-content/uploads/sites/4/2019/09/ms_ilfishalle_eiserlebnis.jpg)',
+            // backgroundImage: 'url(https://www.ilfishalle.ch/wp-content/uploads/sites/4/2019/09/ms_ilfishalle_eiserlebnis.jpg)',
+            backgroundImage: `url(${process.env.PUBLIC_URL}/ilfishalle.jpg)`,
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
