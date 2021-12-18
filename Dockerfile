@@ -14,7 +14,10 @@ COPY . .
 WORKDIR /usr/src/scl-bistro/client
 RUN npm run build
 
+WORKDIR /usr/src/scl-bistro/server
+RUN npm run build
+
 EXPOSE $PORT
 
 WORKDIR /usr/src/scl-bistro/server
-CMD ["npx", "ts-node", "main.ts"]
+CMD ["npm", "run", "start"]
