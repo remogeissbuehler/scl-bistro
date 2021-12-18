@@ -5,7 +5,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { User, IUser } from '../models/User';
 import bcrypt from 'bcrypt';
 import path from 'path';
-import { addUser } from '../db/UserManagement';
+import { addUser, updatePassword } from '../db/UserManagement';
 // import cors from '/';
 
 let router = Router();
@@ -81,6 +81,20 @@ router.post("/signup", async (req: any, res) => {
     }
     
     res.send("ok");
+});
+
+router.use("/chpwd", assertAuthenticationMiddleware);
+router.post("/chpwd", async (req: any, res) => {
+    if (!req.user.username != req.body.username) {
+        res.status(403).send("not allowed");
+    }
+    try {
+        updatePassword(req.body.username, req.body.password);
+    } catch (e: any) {
+        if (e.message && e.message == "no update")
+            res.status(400).end();
+        res.status(500).end();
+    }
 });
 
 export function assertAuthenticationMiddleware(req: Request, res: Response, next: NextFunction) {

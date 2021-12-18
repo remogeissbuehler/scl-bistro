@@ -5,7 +5,7 @@ import { HydratedDocument } from 'mongoose';
 
 // export class UserManagement {
 
-async function hashPw(username: string, password: string) {
+async function hashPw(password: string) {
     const salt = await bcrypt.genSalt(config.misc.saltRounds);
     const hash = await bcrypt.hash(password, salt);
 
@@ -14,7 +14,7 @@ async function hashPw(username: string, password: string) {
 
 
 export async function addUser(username: string, password: string, fullname?: string, pendingApproval: boolean = true) {
-    const hash = await hashPw(username, password);
+    const hash = await hashPw(password);
     const newUser = new User({
         username: username,
         fullname: fullname,
@@ -23,6 +23,23 @@ export async function addUser(username: string, password: string, fullname?: str
     });
     
     await newUser.save();
+}
+
+export async function updatePassword(username: string, newPassword: string) {
+    const hash = await hashPw(newPassword);
+
+    let res = await User.updateOne(
+        { username },
+        {
+            '$set': { hash }
+        }
+    );
+
+    if (res.modifiedCount == 0) {
+        let e = new Error("no update");
+        
+        throw e;
+    }
 }
 
 export async function getUsers() {
