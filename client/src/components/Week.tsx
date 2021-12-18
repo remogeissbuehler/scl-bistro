@@ -1,6 +1,5 @@
 import { ThemeProvider } from "@emotion/react";
 import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { formatMuiErrorMessage } from "@mui/utils";
 import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, KeyboardArrowUp, RemoveCircle, SendSharp } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 // import { DataGrid } from '@mui/x-data-grid';
@@ -9,7 +8,6 @@ import { Component } from "react";
 import { validateTime } from "../utils";
 
 const theme = createTheme();
-const cards = [1, 2, 3, 4, 5, 6, 7];
 
 function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, rows: Array<[string, string, string]>, loadData: Function }) {
     return (
