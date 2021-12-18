@@ -14,8 +14,7 @@ COPY . .
 WORKDIR /usr/src/scl-bistro/client
 RUN npm run build
 
-ENV PORT=4430
-EXPOSE 4430
+EXPOSE $PORT
 
 WORKDIR /usr/src/scl-bistro/server
 CMD ["npx", "ts-node", "main.ts"]
