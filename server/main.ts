@@ -12,17 +12,10 @@ import MongoStore from 'connect-mongo';
 const app = express();
 const db = new Database();
 
-// const httpsServer = createServer({
-//     key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
-//     cert: fs.readFileSync(path.join(__dirname, config.crypto.cert)),
-//     ca: config.crypto.ca == null ? undefined : fs.readFileSync(path.join(__dirname, config.crypto.ca))
-// }, app);
-
 app.use((req, res, next) => {
     console.log(`${req.method}: ${req.url} from ${req.socket.remoteAddress}`);
     next();
 });
-
 
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false}));

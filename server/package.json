@@ -4,22 +4,19 @@
     "@types/express": "^4.17.13",
     "@types/passport": "^1.0.7",
     "@types/passport-local": "^1.0.34",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.5.4"
-  },
-  "dependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
     "@types/express-session": "^1.17.4",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "mongoose": "^6.1.2",
-    "nodemon": "^2.0.15",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0"
   },
@@ -28,9 +25,12 @@
   "main": "main.ts",
   "scripts": {
     "dev": "nodemon",
-    "start": "ts-node main.ts"
+    "start:ts": "ts-node main.ts",
+    "build": "tsc && cp -R crypto build/server/crypto",
+    "start": "cd build/server && node main.js",
+    "clean": "rm -r build",
+    "clean-deps": "rm -r node_modules"
   },
   "author": "RGe",
-  "license": "ISC",
   "description": ""
 }
