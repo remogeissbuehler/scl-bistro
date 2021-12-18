@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { Alert } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const theme = createTheme();
 
@@ -146,6 +147,15 @@ export default function LoginPage({ onLogin }: { onLogin: Function }) {
               >
                 Login
               </Button>
+
+              <Typography>
+                Wenn du noch keinen Account hast, kannst du { }
+                <Link to="/app/signup">
+                  hier einen erstellen. 
+                </Link>
+              </Typography>
+
+              
             </Box>
           </Box>
         </Grid>
