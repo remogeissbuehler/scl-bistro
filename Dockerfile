@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE $PORT
 
 WORKDIR /usr/src/scl-bistro/server
-CMD ["node", "build/server/main.js"]
+CMD ["npm", "run", "start"]
