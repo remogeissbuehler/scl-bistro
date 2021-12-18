@@ -17,7 +17,8 @@ export class Database {
         // console.log(Database.connectionURI);
         let connPromise = mongoose.connect(Database.connectionURI, {
             sslKey: Database.credentials,
-            sslCert: Database.credentials
+            sslCert: Database.credentials,
+            
         }).then(m => {
             let conn = m.connection;
             conn.on("error", console.error.bind(console, "MongoDB connection error:"));

@@ -1,7 +1,8 @@
 server/crypto
 server/node_modules
 client/node_modules
-_config.json
+node_modules
 .DS_Store
 /build
 *.backup
+*.env

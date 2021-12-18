@@ -1,0 +1,14 @@
+{
+    "isProduction": false,
+    "productionConfig": {},
+    "debugConfig": {},
+    "commonConfig": {
+        "db": { 
+            "database": "bistro",
+            "cert": "crypto/dbCert.pem"
+        },
+        "misc": {
+            "saltRounds": 10
+        }
+    }
+}
