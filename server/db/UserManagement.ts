@@ -13,19 +13,20 @@ async function hashPw(username: string, password: string) {
 }
 
 
-export async function addUser(username: string, password: string, fullname?: string) {
+export async function addUser(username: string, password: string, fullname?: string, pendingApproval: boolean = true) {
     const hash = await hashPw(username, password);
     const newUser = new User({
         username: username,
         fullname: fullname,
-        hash: hash
+        hash: hash,
+        pendingApproval: pendingApproval
     });
     
     await newUser.save();
 }
 
 export async function getUsers() {
-    const query = User.find({});
+    const query = User.find({}, "-hash");
     return await query.exec();
 }
 

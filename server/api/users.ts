@@ -9,6 +9,15 @@ import { assertAuthenticationMiddleware } from './auth';
 
 let router = Router();
 router.use(assertAuthenticationMiddleware);
+router.use((req: any, res: any, next) => {
+    if (!req.user?.roles){
+        res.status(403).end();
+    }
+    if (!req.user.roles.includes("admin")) {
+        res.status(403).end();
+    }
+    next();
+});
 
 
 router.get("/all", async (req, res) => {
@@ -16,5 +25,25 @@ router.get("/all", async (req, res) => {
     // res.statusCode = 200;
     res.send(allUsers);
 });
+
+router.patch("/approve", async (req: any, res) => {
+    try {
+        let dbRes = await User.updateOne(
+            { username: req.params.username },
+            { 
+                '$set': {
+                    pendingApproval: false
+                }
+            }
+        );
+        if (dbRes.modifiedCount == 0) {
+            res.status(400).send("nothing updated");
+        }
+        res.send("ok");
+    } catch(e) {
+        console.log(e);
+        res.status(500).end();
+    }
+})
 
 export default router;

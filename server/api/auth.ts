@@ -26,6 +26,8 @@ passport.use(new LocalStrategy((username, password, done) => {
         if (err) { return done(err); }
         if (!user) return done(null, false, { message: "Incorrect Username" });
 
+        if (user.pendingApproval) return done(null, false, { message: "pending approval" });
+
         let cmp = await bcrypt.compare(password, user.hash); 
         // console.log(cmp);
         if (cmp === true) {
@@ -72,23 +74,8 @@ function notAuthorized(req: any, res: any) {
 }
 
 router.post("/signup", async (req: any, res) => {
-    // console.log(req.body);
-
-    if (!req.user) {
-        notAuthorized(req, res);
-        return;
-    }
-    if (!req.user.rights){
-        notAuthorized(req, res);
-        return;
-    }
-    if (!req.user.rights.includes("admin")) {
-        notAuthorized(req, res);
-        return;
-    }
-
     try {
-        await addUser(req.body.username, req.body.password, req.body.name);
+        await addUser(req.body.username, req.body.password, req.body.name, true);
     } catch (e) {
         res.status(400).end();
     }
