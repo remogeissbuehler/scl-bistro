@@ -63,9 +63,9 @@ router.get("/logout", (req, res) => {
     res.send("logged out");
 });
 
-router.get("/signup", (req, res) => {
-    res.sendFile(path.join(__dirname, "signup.html"));
-});
+// router.get("/signup", (req, res) => {
+//     res.sendFile(path.join(__dirname, "signup.html"));
+// });
 
 function notAuthorized(req: any, res: any) {
     res.status(403);
@@ -78,6 +78,7 @@ router.post("/signup", async (req: any, res) => {
         await addUser(req.body.username, req.body.password, req.body.name, true);
     } catch (e) {
         res.status(400).end();
+        return;
     }
     
     res.send("ok");
@@ -85,11 +86,13 @@ router.post("/signup", async (req: any, res) => {
 
 router.use("/chpwd", assertAuthenticationMiddleware);
 router.post("/chpwd", async (req: any, res) => {
-    if (!req.user.username != req.body.username) {
+    
+    if (req.user.username != req.body.username) {
         res.status(403).send("not allowed");
     }
     try {
         updatePassword(req.body.username, req.body.password);
+        res.send("ok");
     } catch (e: any) {
         if (e.message && e.message == "no update")
             res.status(400).end();

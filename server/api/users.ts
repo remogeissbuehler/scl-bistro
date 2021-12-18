@@ -10,11 +10,13 @@ import { assertAuthenticationMiddleware } from './auth';
 let router = Router();
 router.use(assertAuthenticationMiddleware);
 router.use((req: any, res: any, next) => {
-    if (!req.user?.roles){
-        res.status(403).end();
+    if (!req.user?.rights){
+        res.status(403).send("not allowed");
+        return;
     }
-    if (!req.user.roles.includes("admin")) {
-        res.status(403).end();
+    if (!req.user.rights.includes("admin")) {
+        res.status(403).send("not allowed");
+        return;
     }
     next();
 });
@@ -29,7 +31,7 @@ router.get("/all", async (req, res) => {
 router.patch("/approve", async (req: any, res) => {
     try {
         let dbRes = await User.updateOne(
-            { username: req.params.username },
+            { username: req.body.username },
             { 
                 '$set': {
                     pendingApproval: false
