@@ -40,7 +40,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/app", express.static("../client/build"));
+app.use("/app", express.static("../build/client"));
 app.get('/', (req, res) => {
     res.redirect("/app");
 });

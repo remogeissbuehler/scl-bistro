@@ -26,9 +26,9 @@
   "scripts": {
     "dev": "nodemon",
     "start:ts": "ts-node main.ts",
-    "build": "tsc && cp -R crypto build/server/crypto",
-    "start": "cd build/server && node main.js",
-    "clean": "rm -r build",
+    "build": "tsc && cp -R crypto ../build/server/crypto",
+    "start": "cd ../build/server && node main.js",
+    "clean": "rm -r ../build/server",
     "clean-deps": "rm -r node_modules"
   },
   "author": "RGe",

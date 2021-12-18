@@ -11,13 +11,13 @@ RUN npm ci
 WORKDIR /usr/src/scl-bistro
 COPY . .
 
-WORKDIR /usr/src/scl-bistro/client
+WORKDIR /usr/src/scl-bistro/server
 RUN npm run build
 
-WORKDIR /usr/src/scl-bistro/server
+WORKDIR /usr/src/scl-bistro/client
 RUN npm run build
 
 EXPOSE $PORT
 
 WORKDIR /usr/src/scl-bistro/server
-CMD ["npm", "run", "start"]
+CMD ["node", "build/server/main.js"]
