@@ -27,12 +27,12 @@ export const config = {
     // ...(_config.commonConfig),
     db: {
         ...(_config.commonConfig.db),
-        connectionString: process.env.DB_CONNECTION_STRING as string,
+        connectionString: fs.readFileSync(path.join(__dirname, "server", "crypto", "dbConnString.txt")).toString()
         // cert: path.join(__dirname, "dbCert.pem")
     },
     misc: {
         ...(_config.commonConfig.misc),
-        cookieSecret: process.env.COOKIE_SECRET as string
+        cookieSecret: fs.readFileSync(path.join(__dirname, "server", "crypto", "cookieSecret.txt")).toString()
     }
 };
 
