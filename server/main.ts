@@ -21,11 +21,11 @@ import MongoStore from 'connect-mongo';
 const app = express();
 const db = new Database();
 
-const httpsServer = createServer({
-    key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
-    cert: fs.readFileSync(path.join(__dirname, config.crypto.cert)),
-    ca: config.crypto.ca == null ? undefined : fs.readFileSync(path.join(__dirname, config.crypto.ca))
-}, app);
+// const httpsServer = createServer({
+//     key: fs.readFileSync(path.join(__dirname, config.crypto.key)),
+//     cert: fs.readFileSync(path.join(__dirname, config.crypto.cert)),
+//     ca: config.crypto.ca == null ? undefined : fs.readFileSync(path.join(__dirname, config.crypto.ca))
+// }, app);
 
 app.use((req, res, next) => {
     console.log(`${req.method}: ${req.url} from ${req.socket.remoteAddress}`);
@@ -63,9 +63,15 @@ app.use('/auth', auth);
 app.use('/users', users);
 app.use('/inscriptions', inscriptions)
 
-httpsServer.listen(config.server.port, () => {
-    console.log(`https listening on port ${config.server.port}`);
-});
+// httpsServer.listen(config.server.port, () => {
+//     console.log(`https listening on port ${config.server.port}`);
+// });
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+})
 
 // if (config.isProduction) {
 //     // redirect to https

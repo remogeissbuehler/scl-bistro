@@ -14,6 +14,7 @@ COPY . .
 WORKDIR /usr/src/scl-bistro/client
 RUN npm run build
 
+ENV PORT=4430
 EXPOSE 4430
 
 WORKDIR /usr/src/scl-bistro/server
