@@ -77,7 +77,7 @@ router.post("/add", async (req: any, res) => {
 });
 
 router.delete("/:dateId/:meal", async (req: any, res) => {
-    console.log(req);
+    // console.log(req);
     let delObj: any = {};
     delObj[req.params.meal] = {
         user: { _id: req.user._id }
