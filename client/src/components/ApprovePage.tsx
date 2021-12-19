@@ -30,8 +30,10 @@ function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>,
                             <TableCell>
 
                                 {needsApproval
-                                    ? <IconButton
+                                    ? <Button
                                         color="success"
+                                        variant="outlined"
+                                        startIcon={<HowToReg />}
                                         onClick={async () => {
                                             await axios.patch(`/users/approve`, {
                                                 username
@@ -39,8 +41,8 @@ function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>,
                                             loadData();
                                         }}
                                     >
-                                        <HowToReg />
-                                    </IconButton>
+                                        Benutzer bestätigen
+                                    </Button>
                                     : null
                                 }
                             </TableCell>
