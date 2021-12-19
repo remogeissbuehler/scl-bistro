@@ -27,7 +27,7 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                             <TableCell> { name } </TableCell>
                             <TableCell> { time } </TableCell>
                             <TableCell> 
-                                { id == localStorage.getItem("user_id") 
+                                { id == localStorage.getItem("_id") 
                                 ?   <IconButton 
                                         color="error"
                                         onClick={async () => {
