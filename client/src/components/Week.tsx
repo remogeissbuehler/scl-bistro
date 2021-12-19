@@ -1,11 +1,12 @@
 import { ThemeProvider } from "@emotion/react";
 import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, KeyboardArrowUp, RemoveCircle, SendSharp } from '@mui/icons-material';
+import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 // import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
 import { Component } from "react";
 import { validateTime } from "../utils";
+import { LinkButton } from "./LinkButton";
 
 const theme = createTheme();
 
@@ -44,7 +45,7 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                     ))
                 }
                 {
-                    rows.length == 0 ? <TableRow hover={true}> <TableCell>--</TableCell><TableCell>--</TableCell></TableRow>
+                    rows.length == 0 ? <TableRow hover={true} key="lastrow"> <TableCell>--</TableCell><TableCell>--</TableCell></TableRow>
                         : null
                 }
             </TableBody>
@@ -74,7 +75,7 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
     
     // let rows = []
     // if (id === "lunch") {
-    let rows = insc[id].map( (obj: any) => [obj.user._id, obj.user.fullname, obj.time])
+    let rows = insc[id].map( (obj: any) => [obj?.user?._id, obj?.user?.fullname, obj?.time])
     // }
 
     return (
@@ -175,6 +176,22 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                         <Typography variant="h5" color="inherit" noWrap sx={{flexGrow: 1}}>
                             Bistro Anmeldungen
                         </Typography>
+                        {
+                            localStorage.getItem("admin") === "true"
+                            ?
+                                <LinkButton
+                                    variant="outlined"
+                                    color="inherit"
+                                    to="/app/approveUsers"
+                                    startIcon={<ManageAccounts/>}
+                                    sx={{
+                                        mx:2
+                                    }}
+                                >
+                                Benutzer-Übersicht
+                                </LinkButton>
+                            : null
+                        }
                         <Button variant="contained"
                                 color="inherit"
                                 onClick={() => {

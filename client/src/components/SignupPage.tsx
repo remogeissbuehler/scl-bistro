@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { Alert } from '@mui/material';
+import { LinkButton, LinkIconButton } from './LinkButton';
+import { ArrowBack, Home } from '@mui/icons-material';
 
 const theme = createTheme();
 
@@ -83,20 +85,21 @@ export default function SignupPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid 
-        container 
-        component="main" 
+      <Grid
+        container
+        component="main"
         justifyContent="center"
-        sx={{ 
+        sx={{
           height: '100vh',
           backgroundImage: `url(${process.env.PUBLIC_URL}/ilfishalle.jpg)`,
           backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}>
         <CssBaseline />
+
         <Grid
           item
           xs={false}
@@ -104,6 +107,17 @@ export default function SignupPage() {
           md={12}
         />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <LinkIconButton
+            to="/app"
+            color='primary'
+            sx={{
+              ml: 2,
+              mt: 2
+            }}
+          >
+            {/* <Home /> */}
+            <ArrowBack />
+          </LinkIconButton>
           <Box
             sx={{
               my: 8,
@@ -113,18 +127,19 @@ export default function SignupPage() {
               alignItems: 'center',
             }}
           >
+
             <Avatar sx={{ m: 1, bgcolor: 'rgb(37,87,180)' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Neues Konto erstellen 
+              Neues Konto erstellen
             </Typography>
-             { successMessage.trim().length > 0 ? null : 
-                <Box 
-                component="form" 
-                
-                textAlign="center"  
-                onSubmit={handleSubmit} 
+            {successMessage.trim().length > 0 ? null :
+              <Box
+                component="form"
+
+                textAlign="center"
+                onSubmit={handleSubmit}
                 onChange={(e: React.FormEvent<HTMLFormElement>) => {
                   if (errorMessages.length > 0) {
                     let newErrors = validateForm(new FormData(e.currentTarget));
@@ -172,22 +187,22 @@ export default function SignupPage() {
                   id="password-confirm"
                   autoComplete="new-password"
                 />
-  
+
                 {
-                  errorMessages.map(msg => 
-                    <Alert severity='error' sx={{my: 1}} >
-                      { msg }
+                  errorMessages.map(msg =>
+                    <Alert severity='error' sx={{ my: 1 }} >
+                      {msg}
                     </Alert>
                   )
                 },
-                
+
                 {/* <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
                   label="Eingeloggt bleiben"
                 /> */}
                 <Button
                   type="submit"
-                  
+
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
@@ -196,12 +211,12 @@ export default function SignupPage() {
               </Box>
             }
             {
-                successMessage.trim().length > 0 ?
-                  <Alert severity='success' >
-                    { successMessage }
-                  </Alert>
-                  : null
-              }
+              successMessage.trim().length > 0 ?
+                <Alert severity='success' >
+                  {successMessage}
+                </Alert>
+                : null
+            }
           </Box>
         </Grid>
         <Grid

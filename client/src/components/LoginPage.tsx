@@ -38,19 +38,30 @@ export default function LoginPage({ onLogin }: { onLogin: Function }) {
       )
 
       if (res.status == 200) {
-        localStorage.setItem("user_id", res.data._id);
-        localStorage.setItem("username", res.data.username);
-        localStorage.setItem("fullname", res.data.fullname);
-        console.log(res.data);
+        for (let key in res.data) {
+          localStorage.setItem(key, res.data[key]);
+        }
+        // localStorage.setItem("user_id", res.data._id);
+        // localStorage.setItem("username", res.data.username);
+        // localStorage.setItem("fullname", res.data.fullname);
+        // localStorage.set
+        // console.log(res.data);
         setErrorMessage("");
         onLogin();
       } 
     } catch (err: any) {
-      if (err.response && err.response.status == 401)
+      if (!err.response) {
+        setErrorMessage("Unbekannter Fehler, sorry :/");
+        console.log(err);
+        return;
+      }
+      if (err.response.status == 403) {
+        setErrorMessage("Dein Account wurde noch nicht freigeschaltet.");
+      }
+      if (err.response.status == 401)
         setErrorMessage("Falscher Benutzername oder Passwort");
       else {
-        setErrorMessage("Server Fehler, sorry :/");
-        console.log(err);
+        
       }
         
     }

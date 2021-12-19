@@ -7,6 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import SignupPage from './components/SignupPage';
+import ApprovePage from './components/ApprovePage';
 
 // if (!config.isProduction) {
 //   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -24,8 +25,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/app/" element={<MainPage/>}/>
-        <Route path="/app/signup" element={<SignupPage/>}/>
+        <Route path="/app/" 
+               element={<MainPage/>}
+        />
+        <Route path="/app/signup" 
+               element={<SignupPage/>}
+        />
+        <Route path="/app/approveUsers" 
+               element={<ApprovePage/>}
+        />
       </Routes>
     </BrowserRouter>
   );
