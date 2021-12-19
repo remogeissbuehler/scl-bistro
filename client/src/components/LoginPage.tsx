@@ -83,7 +83,12 @@ export default function LoginPage({ onLogin }: { onLogin: Function }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid 
+      container 
+      component="main" 
+      sx={{ 
+        height: '100vh' 
+      }}>
         <CssBaseline />
         <Grid
           item

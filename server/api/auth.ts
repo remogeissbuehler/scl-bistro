@@ -39,9 +39,9 @@ passport.use(new LocalStrategy((username, password, done) => {
     });
 }));
 
-router.use("/login", (req, res, next) => {
+router.post("/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
-        console.log(info);
+        // console.log(info);
         if (err) { return next(err); }
         if (!user) { return res.status(401).end(); }
         if (user.pendingApproval) {
