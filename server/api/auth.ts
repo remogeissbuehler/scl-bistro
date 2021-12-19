@@ -26,7 +26,7 @@ passport.use(new LocalStrategy((username, password, done) => {
         if (err) { return done(err); }
         if (!user) return done(null, false, { message: "Incorrect Username" });
 
-        if (user.pendingApproval) return done(null, false, { message: "pending approval" });
+        // if (user.pendingApproval) return done(null, false, { message: "pending approval" });
 
         let cmp = await bcrypt.compare(password, user.hash); 
         // console.log(cmp);
@@ -39,17 +39,34 @@ passport.use(new LocalStrategy((username, password, done) => {
     });
 }));
 
+router.use("/login", (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        console.log(info);
+        if (err) { return next(err); }
+        if (!user) { return res.status(401).end(); }
+        if (user.pendingApproval) {
+            req.logOut();
+            return res.status(403).send("pending approval") ;
+        }
+        req.logIn(user, function(err) {
+          if (err) { return next(err); }
+          return next();
+        });
+      })(req, res, next);
+})
+
 
 router.post("/login", passport.authenticate('local', {
     'failureMessage': "invalid login"
 }), (req, res) => {
     let _user = req.user as HydratedDocument<IUser>;
+    let isAdmin = _user.rights?.includes("admin");
     
     let user = {
         _id: _user._id,
         username: _user.username,
         fullname: _user.fullname,
-
+        admin: isAdmin
     }
     res.send(user);
 });
@@ -77,6 +94,7 @@ router.post("/signup", async (req: any, res) => {
     try {
         await addUser(req.body.username, req.body.password, req.body.name, true);
     } catch (e) {
+        console.log(e);
         res.status(400).end();
         return;
     }
