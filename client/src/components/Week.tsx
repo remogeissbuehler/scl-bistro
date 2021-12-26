@@ -34,7 +34,6 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                                             await axios.delete(`/inscriptions/${insc._id}/${meal}`);
                                             loadData();
                                         }}
-
                                     >
                                         <RemoveCircle/>
                                     </IconButton>
