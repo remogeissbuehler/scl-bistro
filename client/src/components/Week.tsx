@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@emotion/react";
-import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { Alert, AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 // import { DataGrid } from '@mui/x-data-grid';
@@ -7,8 +7,22 @@ import axios from "axios";
 import { Component } from "react";
 import { validateTime } from "../utils";
 import { LinkButton } from "./LinkButton";
+import config from "common/clientConfig";
 
 const theme = createTheme();
+
+type LunchOrDinner = "lunch" | "dinner";
+
+function checkDeadline(type: "add" | "delete", meal: LunchOrDinner, date: string) {
+    let today = new Date();
+    let deadline = new Date(date);
+    type LorDDel = "lunch_del" | "dinner_del";
+    let [h, m] = type == "add" ? config.deadlines[meal] : config.deadlines[meal + "_del" as LorDDel];
+    deadline.setHours(h);
+    deadline.setMinutes(m);
+
+    return today <= deadline;
+}
 
 function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, rows: Array<[string, string, string]>, loadData: Function }) {
     return (
@@ -23,22 +37,22 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
             <TableBody>
                 {
                     rows.map(([id, name, time]) => (
-                        <TableRow hover={true} key={ name }>
-                            <TableCell> { name } </TableCell>
-                            <TableCell> { time } </TableCell>
-                            <TableCell> 
-                                { id == localStorage.getItem("_id") 
-                                ?   <IconButton 
+                        <TableRow hover={true} key={name}>
+                            <TableCell> {name} </TableCell>
+                            <TableCell> {time} </TableCell>
+                            <TableCell>
+                                {id == localStorage.getItem("_id") && checkDeadline("delete", meal as LunchOrDinner, insc.date)
+                                    ? <IconButton
                                         color="error"
                                         onClick={async () => {
                                             await axios.delete(`/inscriptions/${insc._id}/${meal}`);
                                             loadData();
                                         }}
                                     >
-                                        <RemoveCircle/>
+                                        <RemoveCircle />
                                     </IconButton>
-                                : null
-                                } 
+                                    : null
+                                }
                             </TableCell>
                         </TableRow>
                     ))
@@ -71,31 +85,36 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
             <SendSharp color="success" />
         </IconButton>
     )
-    
+
     // let rows = []
     // if (id === "lunch") {
-    let rows = insc[id].map( (obj: any) => [obj?.user?._id, obj?.user?.fullname, obj?.time])
+    let rows = insc[id].map((obj: any) => [obj?.user?._id, obj?.user?.fullname, obj?.time])
     // }
 
     return (
         <Card variant="outlined" sx={{ mx: 2, my: 1 }}>
             <CardContent>
                 <Typography variant="h5" align="center">{title}</Typography>
-                <NameTable insc={insc} meal={id} rows={ rows } loadData={ loadData } />
-                <Typography align="center" sx={{ mt: 4, mb: 2 }}>Anmelden:</Typography>
-                <Stack direction='row' justifyContent="center">
-                    <TextField
-                        id={`${id}-${insc._id}`}
-                        fullWidth={false}
-                        label="Zeit"
-                        variant="filled"
-                        helperText="Bitte Zeit als hh:mm eintragen"
-                        InputProps={{ endAdornment: <SubmitButton /> }}
-                    />
-                    {/* <IconButton aria-label="tick">
-                        <CheckCircleOutline/>
-                    </IconButton> */}
-                </Stack>
+                <NameTable insc={insc} meal={id} rows={rows} loadData={loadData} />
+                {
+                    checkDeadline("add", id as LunchOrDinner, insc.date) 
+                    ? 
+                        <Stack direction='column' justifyContent="center">
+                            <Typography align="center" sx={{ mt: 4, mb: 2 }}>Anmelden:</Typography>
+                            <TextField
+                                id={`${id}-${insc._id}`}
+                                fullWidth={false}
+                                label="Zeit"
+                                variant="filled"
+                                helperText="Bitte Zeit als hh:mm eintragen"
+                                InputProps={{ endAdornment: <SubmitButton /> }}
+                            />
+                            {/* <IconButton aria-label="tick">
+                                <CheckCircleOutline/>
+                            </IconButton> */}
+                        </Stack>
+                    : <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>Keine Anmeldung mehr möglich</Alert>
+                }
             </CardContent>
         </Card>
     )
@@ -126,7 +145,7 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
         let currentDay = startDate.getDate();
         let date = new Date(startDate.setDate(currentDay + days));
 
-        this.setState({ startDate: date});
+        this.setState({ startDate: date });
         this.loadData();
     }
 
@@ -172,32 +191,32 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                 <CssBaseline />
                 <AppBar position="relative">
                     <Toolbar>
-                        <Typography variant="h5" color="inherit" noWrap sx={{flexGrow: 1}}>
+                        <Typography variant="h5" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                             Bistro Anmeldungen
                         </Typography>
                         {
                             localStorage.getItem("admin") === "true"
-                            ?
+                                ?
                                 <LinkButton
                                     variant="outlined"
                                     color="inherit"
                                     to="/app/approveUsers"
-                                    startIcon={<ManageAccounts/>}
+                                    startIcon={<ManageAccounts />}
                                     sx={{
-                                        mx:2
+                                        mx: 2
                                     }}
                                 >
-                                Benutzer-Übersicht
+                                    Benutzer
                                 </LinkButton>
-                            : null
+                                : null
                         }
                         <Button variant="contained"
-                                color="inherit"
-                                onClick={() => {
-                            axios.get("/auth/logout");
-                            this.onUnauthorized();
-                        }}>
-                            <LogoutIcon color="primary"/>
+                            color="inherit"
+                            onClick={() => {
+                                axios.get("/auth/logout");
+                                this.onUnauthorized();
+                            }}>
+                            <LogoutIcon color="primary" />
                         </Button>
                     </Toolbar>
                 </AppBar>
@@ -210,16 +229,16 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             justifyContent="center"
                         >
                             <Button variant="outlined"
-                                    size="large"
-                                    startIcon={<ArrowCircleLeft />} 
-                                    onClick={ this.updateStartDateFn(-7) }
+                                size="large"
+                                startIcon={<ArrowCircleLeft />}
+                                onClick={this.updateStartDateFn(-7)}
                             >
                                 Letzte Woche
                             </Button>
                             <Button variant="contained"
-                                    size="large"
-                                    endIcon={ <ArrowCircleRight /> }
-                                    onClick={ this.updateStartDateFn(7) }
+                                size="large"
+                                endIcon={<ArrowCircleRight />}
+                                onClick={this.updateStartDateFn(7)}
                             >
                                 Nächste Woche
                             </Button>
@@ -237,8 +256,8 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                                         <Typography gutterBottom variant="h4" component="h2" alignSelf="center">
                                             {new Date(insc.date).toLocaleDateString('de-CH')}
                                         </Typography>
-                                        <InscriptionCard id="lunch" title="Mittag" insc={insc} loadData={ this.loadData } />
-                                        <InscriptionCard id="dinner" title="Abend" insc={insc} loadData={ this.loadData } />
+                                        <InscriptionCard id="lunch" title="Mittag" insc={insc} loadData={this.loadData} />
+                                        <InscriptionCard id="dinner" title="Abend" insc={insc} loadData={this.loadData} />
 
                                         {/* <Typography>
                                                 This is a media card. You can use this section to describe the
@@ -263,13 +282,13 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             <Button variant="outlined">Secondary action</Button>
                         </Stack> */}
                         <Fab onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                             style={{ right: 20, bottom: 20, position: 'fixed' }}
-                             color="primary"
+                            style={{ right: 20, bottom: 20, position: 'fixed' }}
+                            color="primary"
                         >
-                            <KeyboardArrowUp/>
+                            <KeyboardArrowUp />
                         </Fab>
                     </Container>
-                    
+
                     <Snackbar
                         open={this.state.hasError}
                         autoHideDuration={6000}

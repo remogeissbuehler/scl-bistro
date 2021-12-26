@@ -1,6 +1,6 @@
 import { privateEncrypt } from 'crypto';
 import mongoose from 'mongoose';
-import { config } from '../../config';
+import { config } from 'common/config';
 
 
 export class Database {

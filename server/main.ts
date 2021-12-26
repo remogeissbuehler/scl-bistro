@@ -1,5 +1,5 @@
 import express from 'express';
-import { config } from '../config';
+import { config } from 'common/config';
 import { Database } from './db/Database'
 import auth from './api/auth';
 import users from './api/users';

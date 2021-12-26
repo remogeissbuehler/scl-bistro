@@ -9,7 +9,9 @@
         },
         "deadlines": {
             "dinner": [15, 0],
-            "dinner_del": [18, 0]
+            "dinner_del": [18, 0],
+            "lunch": [15,0],
+            "lunch_del": [13,0]
         },
         "misc": {
             "saltRounds": 10

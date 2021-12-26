@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CallbackError, HydratedDocument, isValidObjectId, Mongoose, ObjectId } from 'mongoose';
-import { config } from '../../config';
+import { config } from 'common/config';
 import { Inscription } from '../models/Inscription';
 import { assertAuthenticationMiddleware } from './auth';
 // import bcrypt from 'bcrypt';

@@ -9,12 +9,12 @@ export const config = {
     // ...(_config.commonConfig),
     db: {
         ...(_config.commonConfig.db),
-        connectionString: fs.readFileSync(path.join(__dirname, "server", "crypto", "dbConnString.txt")).toString()
+        connectionString: fs.readFileSync(path.join(__dirname, "..", "server", "crypto", "dbConnString.txt")).toString()
         // cert: path.join(__dirname, "dbCert.pem")
     },
     misc: {
         ...(_config.commonConfig.misc),
-        cookieSecret: fs.readFileSync(path.join(__dirname, "server", "crypto", "cookieSecret.txt")).toString()
+        cookieSecret: fs.readFileSync(path.join(__dirname, "..", "server", "crypto", "cookieSecret.txt")).toString()
     },
     deadlines: _config.commonConfig.deadlines
 };

@@ -1,6 +1,6 @@
 import { User } from '../models/User';
 import bcrypt from 'bcrypt';
-import { config } from '../../config';
+import { config } from 'common/config';
 import { HydratedDocument } from 'mongoose';
 
 // export class UserManagement {
