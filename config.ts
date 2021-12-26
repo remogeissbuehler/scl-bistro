@@ -15,7 +15,8 @@ export const config = {
     misc: {
         ...(_config.commonConfig.misc),
         cookieSecret: fs.readFileSync(path.join(__dirname, "server", "crypto", "cookieSecret.txt")).toString()
-    }
+    },
+    deadlines: _config.commonConfig.deadlines
 };
 
 

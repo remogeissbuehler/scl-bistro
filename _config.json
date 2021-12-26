@@ -7,6 +7,10 @@
             "database": "bistro",
             "cert": "crypto/dbCert.pem"
         },
+        "deadlines": {
+            "dinner": [15, 0],
+            "dinner_del": [18, 0]
+        },
         "misc": {
             "saltRounds": 10
         }
