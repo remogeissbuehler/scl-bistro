@@ -36,6 +36,7 @@ router.get("/:from/:to", async (req, res) => {
 });
 
 type LunchOrDinner = "lunch" | "dinner";
+type LOrDDel = "lunch_del" | "dinner_del";
 type AddOrDelete = "add" | "delete";
 
 const DEBUG_DATE = true;
@@ -47,15 +48,15 @@ const debug_date_log = (...args: any[]) => {
 
 async function checkDeadlines(type: AddOrDelete, meal: LunchOrDinner, dateId: string): Promise<boolean> {
     debug_date_log(`Checking deadlines (${type}, ${meal}, ${dateId}`);
-    if (meal === "lunch") {
-        return true;
-    }
+    // if (meal === "lunch") {
+    //     return true;
+    // }
 
     let today = new Date();
     let inscription = await Inscription.findOne( {_id: dateId} );
     if (inscription != null) {
         let deadline = new Date(inscription.date);
-        let [h, m] = (type == "add") ? config.deadlines.dinner : config.deadlines.dinner_del;
+        let [h, m] = (type == "add") ? config.deadlines[meal] : config.deadlines[meal + "_del" as LOrDDel];
         deadline.setHours(h);
         deadline.setMinutes(m);
 
