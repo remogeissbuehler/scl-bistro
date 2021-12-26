@@ -1,5 +1,5 @@
-import { Database } from './db/Database'
-import { Inscription } from './models/Inscription'
+import { Database } from '../db/Database'
+import { Inscription } from '../models/Inscription'
 
 let db = new Database();
 

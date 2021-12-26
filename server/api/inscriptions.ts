@@ -1,11 +1,7 @@
 import { Router } from 'express';
 import { CallbackError, HydratedDocument, isValidObjectId, Mongoose, ObjectId } from 'mongoose';
-import passport from 'passport';
-// import { Strategy as LocalStrategy } from 'passport-local';
-import { User, IUser } from '../models/User';
-import { getUsers } from '../db/UserManagement';
+import { config } from '../../config';
 import { Inscription } from '../models/Inscription';
-import mongoose from 'mongoose';
 import { assertAuthenticationMiddleware } from './auth';
 // import bcrypt from 'bcrypt';
 
@@ -30,7 +26,7 @@ router.get("/:from/:to", async (req, res) => {
             .populate({
                 path: 'dinner.user',
                 select: "_id fullname username" 
-            })
+            });
         let inscriptions = await query;
         res.send(inscriptions);
     } catch (e) {
@@ -38,6 +34,40 @@ router.get("/:from/:to", async (req, res) => {
         res.status(400).send("check dates");
     }
 });
+
+type LunchOrDinner = "lunch" | "dinner";
+type AddOrDelete = "add" | "delete";
+
+const DEBUG_DATE = true;
+const debug_date_log = (...args: any[]) => {
+    if (DEBUG_DATE)
+        console.log(...args);
+}
+
+
+async function checkDeadlines(type: AddOrDelete, meal: LunchOrDinner, dateId: string): Promise<boolean> {
+    debug_date_log(`Checking deadlines (${type}, ${meal}, ${dateId}`);
+    if (meal === "lunch") {
+        return true;
+    }
+
+    let today = new Date();
+    let inscription = await Inscription.findOne( {_id: dateId} );
+    if (inscription != null) {
+        let deadline = new Date(inscription.date);
+        let [h, m] = (type == "add") ? config.deadlines.dinner : config.deadlines.dinner_del;
+        deadline.setHours(h);
+        deadline.setMinutes(m);
+
+        debug_date_log(`\tCurrent Date / Time: ${today}`);
+        debug_date_log(`\tDeadline: ${deadline}`);
+        debug_date_log(`\tcurrent <= deadline?: ${today <= deadline}`);
+
+        return today <= deadline;
+    }
+
+    return false;
+}
 
 interface AddObj {
     lunch?: { user: ObjectId, time: string }
@@ -55,7 +85,14 @@ router.post("/add", async (req: any, res) => {
         return;
     }
 
-    type LunchOrDinner = "lunch" | "dinner";
+    let allowed = await checkDeadlines("add", body.meal, body.date_id);
+
+    if (!allowed) {
+        console.log(`Too late to add ${body.meal} on ${body.date_id}`);
+        res.status(400).send("too late");
+        return;
+    }
+
     let meal = body.meal as LunchOrDinner;
 
     let addObj: AddObj = {}
@@ -82,6 +119,14 @@ router.delete("/:dateId/:meal", async (req: any, res) => {
     delObj[req.params.meal] = {
         user: { _id: req.user._id }
     };
+
+    let allowed = await checkDeadlines("delete", req.params.meal, req.params.dateId);
+
+    if (!allowed) {
+        console.log(`Too late to delete ${req.params.meal} on ${req.params.dateId}`);
+        res.status(400).send("too late");
+        return;
+    }
 
     await Inscription.updateOne(
         {_id: req.params.dateId },

@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId, Date, AnyObject, isValidObjectId } from 'mongoose';
+import { Schema, model, ObjectId, AnyObject, isValidObjectId } from 'mongoose';
 import { User }from './User';
 import mongoose from 'mongoose';
 
@@ -35,7 +35,7 @@ interface IInscription {
 }
 
 const schema = new Schema<IInscription>({
-    date: { type: Date, required: true, unique: true },
+    date: { type: Schema.Types.Date, required: true, unique: true },
     lunch: [entrySchema],
     dinner: [entrySchema]
 });
