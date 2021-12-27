@@ -1,16 +1,61 @@
 import { ThemeProvider } from "@emotion/react";
-import { Alert, AppBar, Box, Button, ButtonProps, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, Home, HowToReg, KeyboardArrowUp, Refresh, RemoveCircle, SendSharp } from '@mui/icons-material';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { AddCircle, Home, HowToReg, PlusOne, Refresh, RemoveCircle } from '@mui/icons-material';
+import { Alert, AppBar, Button, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 // import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
-import React, { Component } from "react";
-import { validateTime } from "../utils";
-import { useNavigate } from "react-router-dom";
+import React, { Component, useState } from "react";
 import { LinkButton } from "../components/LinkButton";
 import LogoutButton from "../components/LogoutButton";
-import { onLogout } from "../utils/auth";
 import theme from "../styling/theme";
+import { onLogout } from "../utils/auth";
+
+function ConfirmDeleteButtonAndDialog({ username, loadData }: { username: string, loadData: Function }) {
+    let [open, setOpen] = useState(false);
+    function changeOpenFn(value: boolean) {
+        return () => { loadData(); setOpen(value); }
+    }
+
+    return (
+        <>
+            <Button
+                color="error"
+                variant="outlined"
+                startIcon={<RemoveCircle />}
+                onClick={async () => {
+                    setOpen(true);
+                }}
+            >
+                Löschen
+            </Button>
+            <Dialog
+                open={open}
+                onClose={changeOpenFn(false)}
+            >
+                <DialogTitle>
+                    Benutzer löschen?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Willst du den Benutzer "{username}" wirklich löschen?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={changeOpenFn(false)}>Nein</Button>
+                    <Button
+                        onClick={async () => {
+                            await axios.delete(`/users/${username}`);
+                            loadData();
+                            setOpen(false);
+                        }}
+                        autoFocus
+                    >
+                        Ja
+                    </Button>
+                    </DialogActions>
+            </Dialog>
+        </>
+    )
+}
 
 function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>, loadData: Function }) {
     return (
@@ -20,6 +65,7 @@ function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>,
                     <TableCell>Name</TableCell>
                     <TableCell>username</TableCell>
                     <TableCell>Account freischalten</TableCell>
+                    <TableCell>Löschen</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -46,6 +92,9 @@ function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>,
                                     </Button>
                                     : null
                                 }
+                            </TableCell>
+                            <TableCell>
+                                <ConfirmDeleteButtonAndDialog  { ...{ username, loadData } } />
                             </TableCell>
                         </TableRow>
                     ))
@@ -94,7 +143,7 @@ export default class ApprovePage extends Component<any, any> {
     }
 
     get rows(): [string, string, boolean][] {
-        return this.state.data.map((u: User)  => [u?.fullname, u?.username, u?.pendingApproval || false]);
+        return this.state.data.map((u: User) => [u?.fullname, u?.username, u?.pendingApproval || false]);
     }
 
     async loadData() {
@@ -105,7 +154,7 @@ export default class ApprovePage extends Component<any, any> {
                 console.log(users);
                 this.setState({ data: users });
             }
-            
+
         } catch (err: any) {
             if (err.response && (err.response.status == 401 || err.response.status == 403)) {
                 this.addErrorMessage("Berechtigung fehlt");
@@ -147,11 +196,11 @@ export default class ApprovePage extends Component<any, any> {
                         >
                             <Refresh />
                         </Button>
-                        <LogoutButton sx={{ ml: 1 }} callback={onLogout}/>
+                        <LogoutButton sx={{ ml: 1 }} callback={onLogout} />
                     </Toolbar>
                 </AppBar>
                 <main>
-                    <Container sx={{py: 2}} maxWidth="md">
+                    <Container sx={{ py: 2 }} maxWidth="md">
                         {
                             this.state.errorMessages.map(msg =>
                                 <Alert severity='error' sx={{ my: 1 }} >
@@ -162,10 +211,21 @@ export default class ApprovePage extends Component<any, any> {
                         <Typography variant="h4" >
                             Benutzer-Übersicht
                         </Typography>
-                        <Typography sx={{my: 2}}>
+                        <Typography sx={{ my: 2 }}>
                             Hier können Benutzer, die sich neu angemeldet haben, freigeschaltet werden. Dazu auf den Knopf in der «Account freischalten» Spalte klicken.
                         </Typography>
-                        <NameTable rows={ this.rows } loadData={ this.loadData }/>
+                        <NameTable rows={this.rows} loadData={this.loadData} />
+                        <LinkButton
+                            variant="outlined"
+                            startIcon={<AddCircle/>}
+                            to="/app/signup"
+                            color="success"
+                            sx={{
+                                my: 2
+                            }}
+                        >
+                            Neuen Nutzer erfassen
+                        </LinkButton>
                     </Container>
 
 

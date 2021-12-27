@@ -7,7 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import SignupPage from './pages/SignupPage';
-import ApprovePage from './pages/ApprovePage';
+import ApprovePage from './pages/UsersPage';
 
 // if (!config.isProduction) {
 //   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

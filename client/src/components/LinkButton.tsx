@@ -1,13 +1,24 @@
 import { IconButton } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface LinkButtonProps extends ButtonProps {
-    to: string
+    to: string | number
+}
+
+function useNavigateOverload() {
+    let _navigate = useNavigate();
+    return (to: string | number) => {
+        if (typeof to === "string") {
+            _navigate(to);
+        } else {
+            _navigate(to);
+        }
+    }
 }
 
 export function LinkButton({to, ...props}: LinkButtonProps) {
-    let navigate = useNavigate();
+    let navigate = useNavigateOverload();
 
     return <Button {...props} onClick={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -18,7 +29,7 @@ export function LinkButton({to, ...props}: LinkButtonProps) {
 }
 
 export function LinkIconButton({to, ...props}: LinkButtonProps) {
-    let navigate = useNavigate();
+    let navigate = useNavigateOverload();
 
     return <IconButton {...props} onClick={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
