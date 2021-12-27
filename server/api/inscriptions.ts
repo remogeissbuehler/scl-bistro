@@ -3,6 +3,7 @@ import { CallbackError, HydratedDocument, isValidObjectId, Mongoose, ObjectId } 
 import { config } from 'common/config';
 import { Inscription } from '../models/Inscription';
 import { assertAuthenticationMiddleware } from './auth';
+import moment from 'moment-timezone';
 // import bcrypt from 'bcrypt';
 
 let router = Router();
@@ -52,13 +53,16 @@ async function checkDeadlines(type: AddOrDelete, meal: LunchOrDinner, dateId: st
     //     return true;
     // }
 
-    let today = new Date();
+    let today = moment().tz("Europe/Zurich");
     let inscription = await Inscription.findOne( {_id: dateId} );
     if (inscription != null) {
-        let deadline = new Date(inscription.date);
+        let deadline = moment.tz(inscription.date, "Europe/Zurich");
+        // let deadline = new Date(inscription.date);
         let [h, m] = (type == "add") ? config.deadlines[meal] : config.deadlines[meal + "_del" as LOrDDel];
-        deadline.setHours(h);
-        deadline.setMinutes(m);
+        deadline.hours(h);
+        deadline.minutes(m);
+        // deadline.setHours(h);
+        // deadline.setMinutes(m);
 
         debug_date_log(`\tCurrent Date / Time: ${today}`);
         debug_date_log(`\tDeadline: ${deadline}`);
