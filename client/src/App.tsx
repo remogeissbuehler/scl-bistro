@@ -1,13 +1,13 @@
 import './App.css';
-import { MainPage } from './components/MainPage';
+import { MainPage } from './pages/MainPage';
 import {
   BrowserRouter,
   Routes,
   Route,
   Link
 } from "react-router-dom";
-import SignupPage from './components/SignupPage';
-import ApprovePage from './components/ApprovePage';
+import SignupPage from './pages/SignupPage';
+import ApprovePage from './pages/ApprovePage';
 
 // if (!config.isProduction) {
 //   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

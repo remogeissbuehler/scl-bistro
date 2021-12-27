@@ -6,11 +6,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import axios from "axios";
 import { Component } from "react";
 import { validateTime } from "../utils";
-import { LinkButton } from "./LinkButton";
+import { LinkButton } from "../components/LinkButton";
 import config from "common/clientConfig";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "../components/LogoutButton";
+import theme from "../styling/theme";
 
-const theme = createTheme();
 
 type LunchOrDinner = "lunch" | "dinner";
 
@@ -32,16 +32,17 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                 <TableRow>
                     <TableCell>Angemeldet</TableCell>
                     <TableCell>Zeit</TableCell>
-                    <TableCell></TableCell>
+                    {/* <TableCell></TableCell> */}
                 </TableRow>
             </TableHead>
             <TableBody>
                 {
                     rows.map(([id, name, time]) => (
-                        <TableRow hover={true} key={name}>
-                            <TableCell> {name} </TableCell>
-                            <TableCell> {time} </TableCell>
-                            <TableCell>
+                        <>
+                            <TableRow hover={true} key={name}>
+                                <TableCell > {name} </TableCell>
+                                <TableCell > {time} </TableCell>
+                                {/* <TableCell>
                                 {id == localStorage.getItem("_id") && checkDeadline("delete", meal as LunchOrDinner, insc.date)
                                     ? <IconButton
                                         color="error"
@@ -54,8 +55,30 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                                     </IconButton>
                                     : null
                                 }
-                            </TableCell>
-                        </TableRow>
+                            </TableCell> */}
+                            </TableRow>
+
+                            {id == localStorage.getItem("_id") && checkDeadline("delete", meal as LunchOrDinner, insc.date)
+                                ? <TableRow>
+                                    <TableCell colSpan={2} align="center">
+                                        <Button
+                                            startIcon={<RemoveCircle />}
+                                            color="error"
+                                            variant="outlined"
+                                            onClick={async () => {
+                                                await axios.delete(`/inscriptions/${insc._id}/${meal}`);
+                                                loadData();
+                                            }}
+                                        >
+                                            abmelden
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                                : null
+                            }
+
+
+                        </>
                     ))
                 }
                 {
@@ -93,13 +116,16 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
     // }
 
     return (
-        <Card variant="outlined" sx={{ mx: 2, my: 1 }}>
+        <Card
+            variant="outlined"
+            sx={{ mx: 1, my: 1 }}
+        >
             <CardContent>
                 <Typography variant="h5" align="center">{title}</Typography>
                 <NameTable insc={insc} meal={id} rows={rows} loadData={loadData} />
                 {
-                    checkDeadline("add", id as LunchOrDinner, insc.date) 
-                    ? 
+                    checkDeadline("add", id as LunchOrDinner, insc.date)
+                        ?
                         <Stack direction='column' justifyContent="center">
                             <Typography align="center" sx={{ mt: 4, mb: 2 }}>Anmelden:</Typography>
                             <TextField
@@ -114,7 +140,7 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
                                 <CheckCircleOutline/>
                             </IconButton> */}
                         </Stack>
-                    : <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>Keine Anmeldung mehr möglich</Alert>
+                        : <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>Keine Anmeldung mehr möglich</Alert>
                 }
             </CardContent>
         </Card>
@@ -192,11 +218,11 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                 <CssBaseline />
                 <AppBar position="relative">
                     <Toolbar>
-                    <LinkButton
+                        <LinkButton
                             variant="text"
                             to="/app"
                             color="inherit"
-                            
+
                             sx={{
                                 mr: 2,
                                 // opacity: 0
@@ -231,9 +257,9 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             }}>
                             <LogoutIcon color="primary" />
                         </Button> */}
-                        <LogoutButton callback={ () => {
+                        <LogoutButton callback={() => {
                             this.onUnauthorized()
-                        }}/>
+                        }} />
                     </Toolbar>
                 </AppBar>
                 <main>
@@ -262,11 +288,11 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                     </Container>
                     <Container sx={{ py: 2, mx: 0 }} maxWidth={false}>
                         {/* End hero unit */}
-                        <Grid container spacing={4}>
+                        <Grid container spacing={2}>
                             {this.state.inscriptions.map((insc: any) => (
                                 <Grid item key={insc._id} xs={12} sm={4} md={3} xl={1.7} sx={{ px: 0 }}>
                                     <Paper
-                                        sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}
+                                        sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 1 }}
                                     >
                                         {/* <CardContent sx={{ flexGrow: 1 }}> */}
                                         <Typography gutterBottom variant="h4" component="h2" alignSelf="center">

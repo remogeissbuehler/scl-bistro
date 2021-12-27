@@ -7,11 +7,10 @@ import axios from "axios";
 import React, { Component } from "react";
 import { validateTime } from "../utils";
 import { useNavigate } from "react-router-dom";
-import { LinkButton } from "./LinkButton";
-import LogoutButton from "./LogoutButton";
+import { LinkButton } from "../components/LinkButton";
+import LogoutButton from "../components/LogoutButton";
 import { onLogout } from "../utils/auth";
-
-const theme = createTheme();
+import theme from "../styling/theme";
 
 function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>, loadData: Function }) {
     return (

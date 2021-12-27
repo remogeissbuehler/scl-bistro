@@ -11,10 +11,9 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { Alert } from '@mui/material';
-import { LinkButton, LinkIconButton } from './LinkButton';
+import { LinkButton, LinkIconButton } from '../components/LinkButton';
 import { ArrowBack, Home } from '@mui/icons-material';
-
-const theme = createTheme();
+import theme from "../styling/theme";
 
 function validateForm(formData: FormData) {
   let username = formData.get("username");
@@ -128,7 +127,7 @@ export default function SignupPage() {
             }}
           >
 
-            <Avatar sx={{ m: 1, bgcolor: 'rgb(37,87,180)' }}>
+            <Avatar sx={{ m: 1, bgcolor: theme.palette.primary.main }} >
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">

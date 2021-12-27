@@ -2,7 +2,7 @@ import axios from "axios";
 import { Component } from "react";
 import { onLogout } from "../utils/auth";
 import LoginPage from "./LoginPage";
-import Week from "./Week";
+import Week from "./WeekPage";
 
 export class MainPage extends Component<any, { loggedIn: boolean }> {
   

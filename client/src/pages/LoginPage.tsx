@@ -12,8 +12,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { Alert } from '@mui/material';
 import { Link } from 'react-router-dom';
+import theme from '../styling/theme';
 
-const theme = createTheme();
 
 export default function LoginPage({ onLogin }: { onLogin: Function }) {
   // let [hasError, setHasError] = React.useState(false);
