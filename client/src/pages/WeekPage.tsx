@@ -212,6 +212,18 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
         this.loadData();
     }
 
+    formatDeadline([h, m]: [number, number]) {
+        let hours = h.toString();
+        let minutes = m.toString();
+        if (h < 10) {
+            hours = "0" + hours
+        }
+        if (m < 10) {
+            minutes = "0" + minutes
+        }
+        return hours + ":" + minutes
+    }
+
     render() {
         return (
             <ThemeProvider theme={theme}>
@@ -284,7 +296,11 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             >
                                 Nächste Woche
                             </Button>
+                            
                         </Stack>
+                        <Typography>
+                                Abendessen: Anmelden bis { this.formatDeadline(config.deadlines.dinner as [number, number]) }, Abmelden bis {this.formatDeadline(config.deadlines.dinner_del as [number, number])}
+                            </Typography>
                     </Container>
                     <Container sx={{ py: 2, mx: 0 }} maxWidth={false}>
                         {/* End hero unit */}
