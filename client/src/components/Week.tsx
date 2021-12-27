@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import { Alert, AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
+import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, Home, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 // import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
@@ -8,6 +8,7 @@ import { Component } from "react";
 import { validateTime } from "../utils";
 import { LinkButton } from "./LinkButton";
 import config from "common/clientConfig";
+import LogoutButton from "./LogoutButton";
 
 const theme = createTheme();
 
@@ -191,6 +192,18 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                 <CssBaseline />
                 <AppBar position="relative">
                     <Toolbar>
+                    <LinkButton
+                            variant="text"
+                            to="/app"
+                            color="inherit"
+                            
+                            sx={{
+                                mr: 2,
+                                // opacity: 0
+                            }}
+                        >
+                            <Home color="inherit" />
+                        </LinkButton>
                         <Typography variant="h5" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                             Bistro Anmeldungen
                         </Typography>
@@ -210,14 +223,17 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                                 </LinkButton>
                                 : null
                         }
-                        <Button variant="contained"
+                        {/* <Button variant="contained"
                             color="inherit"
                             onClick={() => {
                                 axios.get("/auth/logout");
                                 this.onUnauthorized();
                             }}>
                             <LogoutIcon color="primary" />
-                        </Button>
+                        </Button> */}
+                        <LogoutButton callback={ () => {
+                            this.onUnauthorized()
+                        }}/>
                     </Toolbar>
                 </AppBar>
                 <main>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Component } from "react";
+import { onLogout } from "../utils/auth";
 import LoginPage from "./LoginPage";
 import Week from "./Week";
 
@@ -23,9 +24,7 @@ export class MainPage extends Component<any, { loggedIn: boolean }> {
 
     onUnauthorized() {
         this.setState({ loggedIn: false });
-        localStorage.setItem("loggedIn", "false");
-        for (let key of ["username", "fullname", "_id", "admin"])
-            localStorage.removeItem(key)
+        onLogout();
     }
 
     async checkLogin() {

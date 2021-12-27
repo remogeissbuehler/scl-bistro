@@ -8,6 +8,8 @@ import React, { Component } from "react";
 import { validateTime } from "../utils";
 import { useNavigate } from "react-router-dom";
 import { LinkButton } from "./LinkButton";
+import LogoutButton from "./LogoutButton";
+import { onLogout } from "../utils/auth";
 
 const theme = createTheme();
 
@@ -128,7 +130,7 @@ export default class ApprovePage extends Component<any, any> {
                             to="/app"
                             color="inherit"
                             sx={{
-                                mx: 2
+                                mr: 2
                             }}
                         >
                             <Home color="primary" />
@@ -140,10 +142,13 @@ export default class ApprovePage extends Component<any, any> {
                             variant="outlined"
                             color="inherit"
                             onClick={this.loadData}
+                            sx={{
+                                mx: 1
+                            }}
                         >
                             <Refresh />
                         </Button>
-
+                        <LogoutButton sx={{ ml: 1 }} callback={onLogout}/>
                     </Toolbar>
                 </AppBar>
                 <main>
@@ -154,7 +159,13 @@ export default class ApprovePage extends Component<any, any> {
                                     {msg}
                                 </Alert>
                             )
-                        },
+                        }
+                        <Typography variant="h4" >
+                            Benutzer-Übersicht
+                        </Typography>
+                        <Typography sx={{my: 2}}>
+                            Hier können Benutzer, die sich neu angemeldet haben, freigeschaltet werden. Dazu auf den Knopf in der «Account freischalten» Spalte klicken.
+                        </Typography>
                         <NameTable rows={ this.rows } loadData={ this.loadData }/>
                     </Container>
 
