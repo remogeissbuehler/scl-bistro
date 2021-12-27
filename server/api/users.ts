@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { CallbackError, HydratedDocument } from 'mongoose';
 import passport from 'passport';
 // import { Strategy as LocalStrategy } from 'passport-local';
@@ -40,12 +40,27 @@ router.patch("/approve", async (req: any, res) => {
         );
         if (dbRes.modifiedCount == 0) {
             res.status(400).send("nothing updated");
+            return;
         }
         res.send("ok");
     } catch(e) {
         console.log(e);
         res.status(500).end();
     }
-})
+});
+
+router.delete("/:username", async (req: Request, res: Response) => {
+    try {
+        let dbRes = await User.deleteOne({ username: req.params.username });
+        if (dbRes.deletedCount == 0) {
+            res.status(400).send("nothing updated");
+            return;
+        }
+        res.send("ok");
+    } catch(e) {
+        console.log(e);
+        res.status(500).end();
+    }
+});
 
 export default router;
