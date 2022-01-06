@@ -5,5 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const _config_json_1 = __importDefault(require("./_config.json"));
 exports.default = {
-    deadlines: _config_json_1.default.commonConfig.deadlines
+    deadlines: _config_json_1.default.commonConfig.deadlines,
+    eatingTimes: _config_json_1.default.commonConfig.eatingTimes
 };
