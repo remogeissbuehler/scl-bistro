@@ -341,6 +341,8 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             
                         </Stack>
                         <Typography>
+                                Mittagessen: Mo-Fr keine Anmeldung nötig (Essen 11.00 bis 14.00 Uhr). Sa, So: An- und Abmelden bis {formatDeadline(config.deadlines.lunch as [number, number])}
+                                <br/>
                                 Abendessen: Anmelden bis { formatDeadline(config.deadlines.dinner as [number, number]) }, Abmelden bis {formatDeadline(config.deadlines.dinner_del as [number, number])}
                             </Typography>
                     </Container>
