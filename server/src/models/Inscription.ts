@@ -30,14 +30,18 @@ const entrySchema = new Schema<IEntry>({
 
 interface IInscription {
     date: Date,
-    lunch: IEntry[],
-    dinner: IEntry[]
+    lunch?: IEntry[],
+    dinner?: IEntry[],
+    noLunch?: boolean,
+    noDinner?: boolean
 }
 
 const schema = new Schema<IInscription>({
     date: { type: Schema.Types.Date, required: true, unique: true },
-    lunch: [entrySchema],
-    dinner: [entrySchema]
+    lunch: { type: [entrySchema], required: false, default: null },
+    dinner: [entrySchema],
+    noLunch: Schema.Types.Boolean,
+    noDinner: Schema.Types.Boolean
 });
 
 export const Inscription = model<IInscription>('Inscription', schema);

@@ -1,13 +1,11 @@
 import { ThemeProvider } from "@emotion/react";
-import { Alert, AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, createTheme, CssBaseline, Fab, Grid, Icon, IconButton, makeStyles, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { ArrowCircleLeft, ArrowCircleRight, CheckCircleOutline, Home, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { ArrowCircleLeft, ArrowCircleRight, Home, KeyboardArrowUp, ManageAccounts, RemoveCircle, SendSharp } from '@mui/icons-material';
+import { Alert, AppBar, Button, Card, CardContent, Container, CssBaseline, Fab, Grid, IconButton, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 // import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
-import { Component } from "react";
-import { validateTime } from "../utils";
-import { LinkButton } from "../components/LinkButton";
 import config from "common/clientConfig";
+import { Component } from "react";
+import { LinkButton } from "../components/LinkButton";
 import LogoutButton from "../components/LogoutButton";
 import theme from "../styling/theme";
 
@@ -90,11 +88,47 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
     )
 }
 
-function InscriptionCard(props: { insc: any, title: string, id: string, loadData: Function }) {
-    let { insc, title, id, loadData } = props;
 
+function validateTimeTextField(id: string, val: string): boolean {
+    if (id === "dinner")
+        return true;
+
+    let regex = /(?<hours>\d{1,2})[:.](?<minutes>\d{2})/
+    let groups = val.match(regex)?.groups;
+
+    if (groups?.hours && groups?.minutes) {
+        let [h, m] = [parseInt(groups.hours), parseInt(groups.minutes)];
+        let [hMin, mMin] = config.eatingTimes.lunchMin as [number, number];
+        let [hMax, mMax] = config.eatingTimes.lunchMax as [number, number];
+
+        let withinEatingTimes = (h * 60 + m >= hMin * 60 + mMin) && (h * 60 + m <= hMax * 60 + mMax);
+        if (!withinEatingTimes) {
+            alert(`Essenzeit ist zwischen ${formatDeadline([hMin, mMin])} und ${[formatDeadline([hMax, mMax])]}. Für andere Zeiten bitte mit dem Bistro Kontakt aufnehmen.`);
+            return false;
+        }
+        return true;
+    }
+
+    alert("Bitte Zeit im Format hh:mm eingeben")
+    return false;
+}
+
+function InscriptionCardContent(props: { insc: any, title: string, id: string, loadData: Function }) {
+    let { insc, title, id, loadData } = props;
+    if ((id === "lunch" && insc.noLunch) || (id === "dinner" && insc.noDinner)) {
+        return (
+            <CardContent>
+                <Typography variant="h5" align="center">{title}</Typography>
+                <Typography sx={{mt: 1}}>Keine Anmeldung nötig</Typography>
+            </CardContent>
+        )
+
+    }
+    let rows = insc[id].map((obj: any) => [obj?.user?._id, obj?.user?.fullname, obj?.time]);
     let submitNewTime = async (e: any) => {
         let textField = document.querySelector(`#${id}-${insc._id}`) as any;
+        if (!validateTimeTextField(id, textField.value))
+            return;
         await axios.post("/inscriptions/add", {
             date_id: insc._id,
             meal: id,
@@ -103,24 +137,14 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
 
         loadData();
     }
-
     let SubmitButton = () => (
         <IconButton aria-label="tick" onClick={submitNewTime}>
             <SendSharp color="success" />
         </IconButton>
     )
 
-    // let rows = []
-    // if (id === "lunch") {
-    let rows = insc[id].map((obj: any) => [obj?.user?._id, obj?.user?.fullname, obj?.time])
-    // }
-
     return (
-        <Card
-            variant="outlined"
-            sx={{ mx: 1, my: 1 }}
-        >
-            <CardContent>
+        <CardContent>
                 <Typography variant="h5" align="center">{title}</Typography>
                 <NameTable insc={insc} meal={id} rows={rows} loadData={loadData} />
                 {
@@ -143,10 +167,40 @@ function InscriptionCard(props: { insc: any, title: string, id: string, loadData
                         : <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>Keine Anmeldung mehr möglich</Alert>
                 }
             </CardContent>
+    )
+}
+
+function InscriptionCard(props: { insc: any, title: string, id: string, loadData: Function }) {
+    let { insc, title, id, loadData } = props;
+
+    return (
+        <Card
+            variant="outlined"
+            sx={{ mx: 1, my: 1 }}
+        >
+        
+        <InscriptionCardContent
+            insc={insc}
+            title={title}
+            id={id}
+            loadData={loadData}
+        />
+            
         </Card>
     )
 }
 
+function formatDeadline([h, m]: [number, number]) {
+        let hours = h.toString();
+        let minutes = m.toString();
+        if (h < 10) {
+            hours = "0" + hours
+        }
+        if (m < 10) {
+            minutes = "0" + minutes
+        }
+        return hours + ":" + minutes
+    }
 
 export default class Week extends Component<{ onUnauthorized: Function }, any> {
     onUnauthorized: Function;
@@ -210,18 +264,6 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
 
     componentDidMount() {
         this.loadData();
-    }
-
-    formatDeadline([h, m]: [number, number]) {
-        let hours = h.toString();
-        let minutes = m.toString();
-        if (h < 10) {
-            hours = "0" + hours
-        }
-        if (m < 10) {
-            minutes = "0" + minutes
-        }
-        return hours + ":" + minutes
     }
 
     render() {
@@ -299,7 +341,9 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                             
                         </Stack>
                         <Typography>
-                                Abendessen: Anmelden bis { this.formatDeadline(config.deadlines.dinner as [number, number]) }, Abmelden bis {this.formatDeadline(config.deadlines.dinner_del as [number, number])}
+                                Mittagessen: Mo-Fr keine Anmeldung nötig (Essen 11.00 bis 14.00 Uhr). Sa, So: An- und Abmelden bis {formatDeadline(config.deadlines.lunch as [number, number])}
+                                <br/>
+                                Abendessen: Anmelden bis { formatDeadline(config.deadlines.dinner as [number, number]) }, Abmelden bis {formatDeadline(config.deadlines.dinner_del as [number, number])}
                             </Typography>
                     </Container>
                     <Container sx={{ py: 2, mx: 0 }} maxWidth={false}>
@@ -320,7 +364,6 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                                         </Typography>
                                         <InscriptionCard id="lunch" title="Mittag" insc={insc} loadData={this.loadData} />
                                         <InscriptionCard id="dinner" title="Abend" insc={insc} loadData={this.loadData} />
-
                                         {/* <Typography>
                                                 This is a media card. You can use this section to describe the
                                                 content.

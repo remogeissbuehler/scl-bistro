@@ -24,10 +24,10 @@
   },
   "name": "scl-bistro-server",
   "version": "0.0.1",
-  "main": "main.ts",
+  "main": "src/main.ts",
   "scripts": {
     "dev": "nodemon",
-    "start:ts": "ts-node main.ts",
+    "start:ts": "ts-node src/main.ts",
     "build": "tsc && cp -R crypto build/server/crypto",
     "start": "node build/server/main.js",
     "clean": "rm -r build/server",

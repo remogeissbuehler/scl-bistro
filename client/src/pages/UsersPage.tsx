@@ -1,9 +1,10 @@
 import { ThemeProvider } from "@emotion/react";
-import { AddCircle, Home, HowToReg, PlusOne, Refresh, RemoveCircle } from '@mui/icons-material';
-import { Alert, AppBar, Button, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
+import { AccountBox, AddCircle, ArrowDownward, GroupAdd, GroupRemove, Home, HowToReg, KeyboardArrowDown, NewReleases, PlusOne, Refresh, RemoveCircle } from '@mui/icons-material';
+import { Alert, AppBar, Avatar, Button, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemIcon, Menu, MenuItem, Stack, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
+import { color, palette } from "@mui/system";
 // import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
-import React, { Component, useState } from "react";
+import React, { Component, ReactComponentElement, useState } from "react";
 import { LinkButton } from "../components/LinkButton";
 import LogoutButton from "../components/LogoutButton";
 import theme from "../styling/theme";
@@ -51,53 +52,185 @@ function ConfirmDeleteButtonAndDialog({ username, loadData }: { username: string
                     >
                         Ja
                     </Button>
-                    </DialogActions>
+                </DialogActions>
             </Dialog>
         </>
     )
 }
 
-function NameTable({ rows, loadData }: { rows: Array<[string, string, boolean]>, loadData: Function }) {
+function OtherActionsMenu({ user, loadData }: { user: User, loadData: Function }) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
+
+    let username = user.username;
+
+    let AdminItem = () => {
+        if (user.pendingApproval) {
+            return <MenuItem
+                onClick={async () => {
+                    await axios.patch(`/users/approve`, {
+                        username
+                    });
+                    loadData();
+                }}
+               sx={{color: theme.palette.success.main}} 
+            >
+                <ListItemIcon sx={{color: theme.palette.success.main}}>
+                    <HowToReg></HowToReg>
+                </ListItemIcon>
+                Benutzer bestätigen
+            </MenuItem>
+        }
+
+        if (user.rights?.includes("admin")) {
+            return (
+                <MenuItem
+                    onClick={async () => {
+                        await axios.patch("/users/removeAdmin", { username });
+                        loadData();
+                    }}
+                >
+                    <ListItemIcon sx={{ color: theme.palette.error.main }}>
+                        <GroupRemove />
+                    </ListItemIcon>
+                    Admin-Rechte entfernen
+                </MenuItem>
+            )
+        }
+        return (
+            <MenuItem
+                onClick={async () => {
+                    await axios.patch("/users/makeAdmin", { username });
+                    loadData();
+                }}
+            >
+                <ListItemIcon sx={{ color: theme.palette.success.main }}>
+                    <GroupAdd />
+                </ListItemIcon>
+                Admin-Rechte geben
+            </MenuItem>
+        )
+    }
+
+    let [dialogOpen, setDialogOpen] = useState(false);
+    let changeDialogOpenFn = (value: boolean) => {
+        return () => { loadData(); setDialogOpen(value); }
+    }
+    let ConfirmDialog = () => {
+
+        return (
+            <Dialog
+                open={dialogOpen}
+                onClose={changeDialogOpenFn(false)}
+            >
+                <DialogTitle>
+                    Benutzer löschen?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Willst du den Benutzer "{username}" wirklich löschen?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={changeDialogOpenFn(false)}>Nein</Button>
+                    <Button
+                        onClick={async () => {
+                            await axios.delete(`/users/${username}`);
+                            loadData();
+                            setDialogOpen(false);
+                        }}
+                        autoFocus
+                    >
+                        Ja
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
+
+
+    return (
+        <>
+            <Button
+                endIcon={<KeyboardArrowDown />}
+                onClick={handleClick}
+                variant="outlined"
+            >
+                Optionen
+            </Button>
+            <ConfirmDialog />
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+            >
+                <AdminItem />
+                <MenuItem
+                    onClick={changeDialogOpenFn(true)}
+                    color={theme.palette.error.main}
+
+                >
+                    {/* <ConfirmDeleteButtonAndDialog {...{ username, loadData }} /> */}
+                    <ListItemIcon sx={{ color: theme.palette.error.main }}>
+                        <RemoveCircle />
+                    </ListItemIcon>
+                    Löschen
+                </MenuItem>
+                
+            </Menu>
+        </>
+    )
+}
+
+
+function NameTable({ users, loadData }: { users: User[], loadData: Function }) {
+    let rows: [User, string, string][] = users.map((u: User) => [u, u?.fullname, u?.username]);
+    let icon = null;
+
     return (
         <Table sx={{ bgcolor: "Window", mt: 1 }} size='small'>
             <TableHead sx={{ bgcolor: "WindowFrame" }}>
                 <TableRow>
                     <TableCell>Name</TableCell>
                     <TableCell>username</TableCell>
-                    <TableCell>Account freischalten</TableCell>
-                    <TableCell>Löschen</TableCell>
+                    <TableCell>Optionen</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
                 {
-                    rows.map(([name, username, needsApproval]) => (
+                    rows.map(([user, name, username]) => {
+                        let icon = null;
+                        if (user?.pendingApproval)
+                            icon = <NewReleases sx={{color: theme.palette.success.main}}/>
+                        if (user?.rights?.includes("admin"))
+                            icon = <AccountBox/>
+                        return (
                         <TableRow hover={true} key={name}>
-                            <TableCell> {name} </TableCell>
-                            <TableCell> {username} </TableCell>
-                            <TableCell>
-
-                                {needsApproval
-                                    ? <Button
-                                        color="success"
-                                        variant="outlined"
-                                        startIcon={<HowToReg />}
-                                        onClick={async () => {
-                                            await axios.patch(`/users/approve`, {
-                                                username
-                                            });
-                                            loadData();
-                                        }}
-                                    >
-                                        Benutzer bestätigen
-                                    </Button>
-                                    : null
-                                }
+                            <TableCell padding="normal">
+                                <Stack direction="row" alignItems="center">
+                                    {/* {user?.rights?.includes("admin") && <AccountBox/>} */}
+                                    {<ListItemIcon sx={{color: theme.palette.primary.main}}> { icon }</ListItemIcon>}
+                                {name} 
+                                    </Stack> 
+                                
                             </TableCell>
+                            <TableCell> {username} </TableCell>
+                            
                             <TableCell>
-                                <ConfirmDeleteButtonAndDialog  { ...{ username, loadData } } />
+                                {/* <ConfirmDeleteButtonAndDialog  {...{ username, loadData }} /> */}
+                                <OtherActionsMenu {...{ user, loadData }} />
                             </TableCell>
                         </TableRow>
-                    ))
+                        )
+                    })
                 }
                 {
                     rows.length == 0 ? <TableRow hover={true}> <TableCell>--</TableCell><TableCell>--</TableCell></TableRow>
@@ -212,12 +345,12 @@ export default class ApprovePage extends Component<any, any> {
                             Benutzer-Übersicht
                         </Typography>
                         <Typography sx={{ my: 2 }}>
-                            Hier können Benutzer, die sich neu angemeldet haben, freigeschaltet werden. Dazu auf den Knopf in der «Account freischalten» Spalte klicken.
+                            Hier können Benutzer, die sich neu angemeldet haben, freigeschaltet werden. Dazu den Optionen-Knopf verwenden. 
                         </Typography>
-                        <NameTable rows={this.rows} loadData={this.loadData} />
+                        <NameTable users={this.state.data} loadData={this.loadData} />
                         <LinkButton
                             variant="outlined"
-                            startIcon={<AddCircle/>}
+                            startIcon={<AddCircle />}
                             to="/app/signup"
                             color="success"
                             sx={{

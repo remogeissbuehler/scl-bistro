@@ -8,10 +8,14 @@
             "cert": "crypto/dbCert.pem"
         },
         "deadlines": {
-            "dinner": [15, 0],
-            "dinner_del": [18, 0],
-            "lunch": [15,0],
-            "lunch_del": [13,0]
+            "dinner": [14, 30],
+            "dinner_del": [17, 30],
+            "lunch": [10,0],
+            "lunch_del": [10,0]
+        },
+        "eatingTimes": {
+            "lunchMin": [11,0],
+            "lunchMax": [14,0]
         },
         "misc": {
             "saltRounds": 10
