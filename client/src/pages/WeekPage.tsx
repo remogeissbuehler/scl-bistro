@@ -356,7 +356,11 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                                     >
                                         {/* <CardContent sx={{ flexGrow: 1 }}> */}
                                         <Typography gutterBottom variant="h4" component="h2" alignSelf="center">
-                                            {new Date(insc.date).toLocaleDateString('de-CH')}
+                                            {
+                                                new Date(insc.date).toLocaleDateString('de-CH', { 
+                                                    weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' 
+                                                })
+                                            }
                                         </Typography>
                                         <InscriptionCard id="lunch" title="Mittag" insc={insc} loadData={this.loadData} />
                                         <InscriptionCard id="dinner" title="Abend" insc={insc} loadData={this.loadData} />
