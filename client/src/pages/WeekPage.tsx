@@ -241,7 +241,8 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
         let endDay = startDate.getDate() + 6;
         let endDate = new Date((new Date(startDate)).setDate(endDay));
 
-        let short = (date: Date) => date.toLocaleDateString('en-GB').split("/").reverse().join("-");
+        // let short = (date: Date) => date.toLocaleDateString('en-GB').split("/").reverse().join("-");
+        let short = (date: Date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 
         try {
             let rep = await axios.get(`/inscriptions/${short(startDate)}/${short(endDate)}`);
