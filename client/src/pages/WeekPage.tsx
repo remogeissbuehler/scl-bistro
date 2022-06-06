@@ -12,13 +12,26 @@ import theme from "../styling/theme";
 
 type LunchOrDinner = "lunch" | "dinner";
 
-function checkDeadline(type: "add" | "delete", meal: LunchOrDinner, date: string) {
+function checkDeadline(type: "add" | "delete", meal: LunchOrDinner, insc: any) {
     let today = new Date();
+    let date = insc.date;
+
+    // default is using the deadlines configured, on the same date as the meal
     let deadline = new Date(date);
     type LorDDel = "lunch_del" | "dinner_del";
     let [h, m] = type == "add" ? config.deadlines[meal] : config.deadlines[meal + "_del" as LorDDel];
     deadline.setHours(h);
     deadline.setMinutes(m);
+
+    // special cases: when there's a custom deadline set in the db, this overrides the above
+    if (meal + "Deadline" in insc) {
+        deadline = new Date(insc[meal + "Deadline"])
+    }
+
+    // if there's a special delete Deadline too, this again overrides the above.
+    if (type === "delete" && meal + "DeleteDeadline" in insc) {
+        deadline = new Date(insc[meal + "DeleteDeadline"]);
+    }
 
     return today <= deadline;
 }
@@ -56,7 +69,7 @@ function NameTable({ insc, meal, rows, loadData }: { insc: any, meal: string, ro
                             </TableCell> */}
                             </TableRow>
 
-                            {id == localStorage.getItem("_id") && checkDeadline("delete", meal as LunchOrDinner, insc.date)
+                            {id == localStorage.getItem("_id") && checkDeadline("delete", meal as LunchOrDinner, insc)
                                 ? <TableRow>
                                     <TableCell colSpan={2} align="center">
                                         <Button
@@ -143,12 +156,32 @@ function InscriptionCardContent(props: { insc: any, title: string, id: string, l
         </IconButton>
     )
 
+    let MaybeDeadline = () => {
+        let s = "";
+        if (id + "Deadline" in insc) {
+            let deadline = new Date(insc[id + "Deadline"]);
+            let deadlineStr = deadline.toLocaleString('de-CH', {day: "numeric", month: "numeric", hour: "numeric", minute: "numeric"});
+            s += `Anmelden bis: ${ deadlineStr }`
+        }
+        if (id + "DeleteDeadline" in insc) {
+            let deadline = new Date(insc[id + "DeleteDeadline"]);
+            let deadlineStr = deadline.toLocaleString('de-CH', {day: "numeric", month: "numeric", hour: "numeric", minute: "numeric"});
+            s += `Abmelden bis: ${ deadlineStr }`
+        }
+
+        if (s !== "")
+            return <Typography variant="caption">{ s }</Typography>
+        else
+            return <></>
+    }
+
     return (
         <CardContent>
                 <Typography variant="h5" align="center">{title}</Typography>
+                <MaybeDeadline/>
                 <NameTable insc={insc} meal={id} rows={rows} loadData={loadData} />
                 {
-                    checkDeadline("add", id as LunchOrDinner, insc.date)
+                    checkDeadline("add", id as LunchOrDinner, insc)
                         ?
                         <Stack direction='column' justifyContent="center">
                             <Typography align="center" sx={{ mt: 4, mb: 2 }}>Anmelden:</Typography>
