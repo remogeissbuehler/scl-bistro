@@ -215,10 +215,12 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
             hasError: false,
             loading: true,
             inscriptions: [],
+            infoText: ""
             // startDay = new Date();
         }
 
         this.loadData = this.loadData.bind(this);
+        this.getInfoText = this.getInfoText.bind(this);
     }
 
     updateStartDate(days: number) {
@@ -263,11 +265,19 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
 
     }
 
+    async getInfoText() {
+        let rep = await axios.get(`/params/website/infoText`);
+        let infoText = rep.data;
+        this.setState({ infoText });
+    }
+
     componentDidMount() {
         this.loadData();
+        this.getInfoText();
     }
 
     render() {
+        
         return (
             <ThemeProvider theme={theme}>
                 <CssBaseline />
@@ -345,6 +355,9 @@ export default class Week extends Component<{ onUnauthorized: Function }, any> {
                                 Mittagessen: Mo-Fr keine Anmeldung nötig (Essen 11.00 bis 14.00 Uhr). Sa, So: An- und Abmelden bis {formatDeadline(config.deadlines.lunch as [number, number])}
                                 <br/>
                                 Abendessen: Anmelden bis { formatDeadline(config.deadlines.dinner as [number, number]) }, Abmelden bis {formatDeadline(config.deadlines.dinner_del as [number, number])}
+                                <br/>
+                                <br/>
+                                { this.state.infoText }
                             </Typography>
                     </Container>
                     <Container sx={{ py: 2, mx: 0 }} maxWidth={false}>
