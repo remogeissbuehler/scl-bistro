@@ -15,6 +15,10 @@ router.get("/:from/:to", async (req, res) => {
     // console.log(req.params.from, req.params.to);
     let from = new Date(req.params.from);
     let to = new Date(req.params.to);
+    from.setHours(0);
+    from.setMinutes(0);
+    to.setHours(23);
+    to.setMinutes(59);
 
     // console.log([from, to]);
 
@@ -29,6 +33,9 @@ router.get("/:from/:to", async (req, res) => {
                 select: "_id fullname username" 
             });
         let inscriptions = await query;
+        inscriptions.forEach(insc => {
+            insc.date.setHours(0)
+        })
         res.send(inscriptions);
     } catch (e) {
         console.log(e);

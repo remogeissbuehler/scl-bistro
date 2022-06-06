@@ -4,6 +4,7 @@ import { Database } from './db/Database'
 import auth from './api/auth';
 import users from './api/users';
 import inscriptions from './api/inscriptions';
+import params from './api/params';
 import passport from 'passport';
 import * as bodyParser from 'body-parser';
 import session from 'express-session';
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 app.use('/auth', auth);
 app.use('/users', users);
 app.use('/inscriptions', inscriptions);
+app.use('/params', params);
 
 const PORT = process.env.PORT || 8080;
 
